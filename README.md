@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+Self-Healing Map (SHM) internal operations console for the Atlas L5 Autonomy Platform.
 
-## Project info
+A clickable, role-aware prototype UI that lets Mapping, Autonomy, Safety, and Fleet Ops teams review detected map mismatches, inspect proposed micro-patches with evidence bundles, advance patches through a staged deployment pipeline, and execute rollbacks or kill switches — all with a full immutable audit trail.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Overview
+Autonomous vehicles depend on centimeter-accurate HD maps. When the physical world changes — lane re-striping, construction, new turn restrictions — the onboard map lags behind, causing conservative driving behavior, remote assist escalations, and rider complaints.
 
-## How can I edit this code?
+The Self-Healing Map Console closes that gap. It surfaces statistically-validated mismatch clusters detected from fleet telemetry, proposes micro-patches, and lets human operators review evidence, promote patches through a safety-gated pipeline (Candidate → Shadow → Silent → Active), and monitor fleet distribution — all with role-based access control and zero-trust auditability.
 
-There are several ways of editing your application.
+Features
+8 Fully Routed Pages
+Page	Description
+Login / Role Switch	Role selector for demo: Mapping On-call, Autonomy Engineer, Safety Engineer, Fleet Ops Manager, Admin
+Dashboard	KPI tiles (trips, mismatch rate, TTM, remote assists), Launch Zone cards, Patch Pipeline funnel
+Mismatch Feed	Filterable work queue of detected clusters with confidence scores and evidence completeness
+Patch Detail	5-tab deep-dive: Summary, Map Delta Preview, Evidence Items, Audit Log, Safety Gates
+Distribution & Fleet	Patch distribution table, staged rollout controls (10/25/50/100%), fleet success rates
+Kill Switch & Rollback	Global SHM kill switch (typed-phrase confirmation), geo-fence kills, manual rollbacks
+Thresholds & Policy	Evidence thresholds, patch type allowlist, TTL defaults — role-gated editing
+Observability	TTM trends, interventions pre/post patch, conservative mode time, patch clutter index, alerts
+Core Interactions
+Stage promotions update patch state, write to the audit log, and reflect in the Distribution page
+Rollback moves patches to Rolled Back state with a new audit entry
+Global kill switch requires typing DISABLE SHM and triggers a persistent fleet-wide banner
+RBAC disables or hides action buttons based on the active role
+Evidence snapshots open in a modal with vehicle/sensor metadata
+Sample Data
+Pre-loaded with three launch zones and realistic patch examples:
 
-**Use Lovable**
+Zone 19 – Airport Loop: Terminal 4 Merge lane shift ~1.2m (N=10, M=40, 3-day spread, Shadow stage)
+Zone 19 – Departures Curve: Turn restriction added (N=15, M=52, 5-day spread, Silent stage)
+Zone 12 – Downtown Core: Construction churn with low-confidence candidates
+Zone 7 – Highway Corridor: Lane re-striping with medium confidence
+Tech Stack
+React 18 + TypeScript
+Vite — fast dev server and bundler
+Tailwind CSS — dark ops-console design system (semantic tokens throughout)
+shadcn/ui — accessible component primitives
+Recharts — observability charts
+React Router v6 — multi-page routing
+React Context — role state, patch state, kill switch state
+Design System
+Dark "mission control" aesthetic — deep navy/slate backgrounds, electric blue primary actions, amber warnings, red for safety-critical controls. Typography pairs Inter (UI) with JetBrains Mono (data/IDs). All colors use HSL semantic tokens defined in index.css and tailwind.config.ts.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Stage badges use a distinct color language:
 
-Changes made via Lovable will be committed automatically to this repo.
+Stage	Color
+Candidate	Blue
+Shadow	Purple
+Silent	Amber
+Active	Green
+Rolled Back	Red
+Expired	Gray
+RBAC Model
+Role	Permissions
+Mapping On-call	create_draft, mark_duplicate, request_evidence, promote_shadow, propose_silent
+Autonomy Engineer	create_draft, request_evidence, promote_shadow
+Safety Engineer	block, approve, rollback, change_thresholds, create_safety_note, promote_shadow, promote_silent
+Fleet Ops Manager	view_distribution, rollback
+Admin	All of the above + promote_active, kill_switch
+Developer Notes
+Each page includes collapsible Developer Notes panels documenting:
 
-**Use your preferred IDE**
+Intended REST API endpoints
+Data model schemas (patch schema, cluster model, evidence bundle)
+Stage state machine rules
+Permission checks per action
+Signature verification requirements for patch artifacts
+These are visible in the UI and intended for engineering/design handoff.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Getting Started
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Clone and install
+git clone <repo-url>
+cd atlas-shm-console
+npm install
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start dev server
 npm run dev
-```
+Navigate to http://localhost:5173, select a role, and explore the console.
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Project Status
+This is a prototype UI with deterministic mock data — no backend is required. It is intended for stakeholder review, design iteration, and API contract definition prior to production implementation.
