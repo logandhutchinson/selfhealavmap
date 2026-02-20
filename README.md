@@ -1,4 +1,6 @@
-Self-Healing Map (SHM) internal operations console for the Atlas L5 Autonomy Platform.
+Self-Healing Map (SHM) internal operations console for an L5 Autonomy Platform.
+
+https://selfhealavmap.lovable.app/
 
 A clickable, role-aware prototype UI that lets Mapping, Autonomy, Safety, and Fleet Ops teams review detected map mismatches, inspect proposed micro-patches with evidence bundles, advance patches through a staged deployment pipeline, and execute rollbacks or kill switches — all with a full immutable audit trail.
 
